@@ -3,7 +3,7 @@ This repository hosts the DataGuard DLP Project's Machine Learning Models. These
 
 ---
 
-# 🛡️ DataGuard: Contextual PII Detection System
+# Ã°Å¸â€ºÂ¡Ã¯Â¸Â DataGuard: Contextual PII Detection System
 
 [![Python](https://img.shields.io/badge/Python-3.8%2B-blue?logo=python&logoColor=white)](https://www.python.org/)
 [![Hugging Face](https://img.shields.io/badge/Models-Hugging%20Face-yellow?logo=huggingface&logoColor=black)](https://huggingface.co/theinvinciblehasnainali/DataGuard-Weights)
@@ -16,11 +16,11 @@ Unlike traditional Regex-based scanners that blindly flag every 13-digit number,
 
 ---
 
-## 🌟 Key Features
+## Ã°Å¸Å’Å¸ Key Features
 
 * **Context-Aware Analysis:** uses the `bert-base-uncased` architecture to analyze the surrounding words of a potential leak.
-    * *Example:* "Order ID 42101..." ➡️ **🟢 SAFE**
-    * *Example:* "User CNIC is 42101..." ➡️ **🔴 LEAK**
+    * *Example:* "Order ID 42101..." Ã¢Å¾Â¡Ã¯Â¸Â **Ã°Å¸Å¸Â¢ SAFE**
+    * *Example:* "User CNIC is 42101..." Ã¢Å¾Â¡Ã¯Â¸Â **Ã°Å¸â€Â´ LEAK**
 * **High-Precision Models:** Achieves **99.96% confidence** on validation datasets containing mixed Pakistani PII (CNIC, IBAN, Phone Numbers).
 * **Multi-Tier Architecture:** Deployable on everything from cloud servers to edge devices.
     * **Base (v4):** Maximum Accuracy (Server-grade).
@@ -30,7 +30,7 @@ Unlike traditional Regex-based scanners that blindly flag every 13-digit number,
 
 ---
 
-## 🏗️ Architecture & Performance
+## Ã°Å¸Ââ€”Ã¯Â¸Â Architecture & Performance
 
 DataGuard moves beyond simple Named Entity Recognition (NER) by utilizing **Sequence Classification**. The model evaluates the entire semantic structure of a sentence to determine if it constitutes a security risk.
 
@@ -42,7 +42,7 @@ DataGuard moves beyond simple Named Entity Recognition (NER) by utilizing **Sequ
 
 ---
 
-## 👥 Project Team
+## Ã°Å¸â€˜Â¥ Project Team
 
 This project is the result of a collaborative effort to bring advanced AI security to the DataGuard ecosystem.
 
@@ -56,7 +56,7 @@ This project is the result of a collaborative effort to bring advanced AI securi
 
 ---
 
-## 🚀 Installation & Setup
+## Ã°Å¸Å¡â‚¬ Installation & Setup
 
 ### Prerequisites
 * Python 3.8 or higher
@@ -65,7 +65,7 @@ This project is the result of a collaborative effort to bring advanced AI securi
 
 ### 1. Clone the Repository
 ```bash
-git clone [https://github.com/theinvinciblehasnainali/DataGuard-PII-Detector.git](https://github.com/theinvinciblehasnainali/DataGuard-PII-Detector.git)
+git clone https://github.com/theinvinciblehasnainali/DataGuard-PII-Detector.git
 cd DataGuard-PII-Detector
 
 ```
@@ -89,22 +89,22 @@ pip install -r requirements.txt
 Since the model weights (~4.30 GB) are too large for GitHub, they are hosted on Hugging Face. We have provided a setup script to handle this automatically.
 
 ```bash
-python setup_models.py
+python -m src.setup_models --tier all
 
 ```
 
-*This script will fetch the `base`, `small`, and `tiny` models from [Hugging Face](https://www.google.com/url?sa=E&source=gmail&q=https://huggingface.co/theinvinciblehasnainali/DataGuard-Weights) and place them in the `models/` directory.*
+*This script will fetch the `base`, `small`, and `tiny` models from [Hugging Face](https://huggingface.co/theinvinciblehasnainali/DataGuard-Weights) and place them in the `models/` directory.*
 
 ---
 
-## 💻 Usage
+## Ã°Å¸â€™Â» Usage
 
 ### Quick Audit (Command Line)
 
 To test the model immediately on a sample string:
 
 ```bash
-python -m src.inference
+python -m src.inference --tier base --version v4 --threshold 0.60 --text "User CNIC is 42101-1234567-1"
 
 ```
 
@@ -125,16 +125,17 @@ result = detector.predict(text)
 print(result)
 # Output:
 # {
-#   "status": "🔴 LEAK",
+#   "status": "LEAK",
 #   "confidence": "99.96%",
 #   "label_id": 1
+#   "reason": "model_prediction"
 # }
 
 ```
 
 ---
 
-## 🔮 Roadmap & Future Enhancements
+## Ã°Å¸â€Â® Roadmap & Future Enhancements
 
 We are constantly improving DataGuard. Here is what's coming next:
 
@@ -144,13 +145,70 @@ We are constantly improving DataGuard. Here is what's coming next:
 
 ---
 
-## 📄 License
+## Ã°Å¸â€œâ€ž License
 
 This project is licensed under the **MIT License** - see the [LICENSE](https://www.google.com/search?q=LICENSE) file for details.
 
 ---
 
-## 🙏 Acknowledgments
+## Ã°Å¸â„¢Â Acknowledgments
 
 * **Hugging Face:** For hosting the model weights and providing the `transformers` library.
 * **Google Research:** For the original BERT architecture.
+
+
+### Advanced Commands
+
+```bash
+# Download only one tier to save bandwidth/disk
+python -m src.setup_models --tier tiny
+
+# Disable placeholder override (strict model decision)
+python -m src.inference --no-placeholder-filter --text "dummy CNIC 42101-1234567-1"
+
+# Run benchmark with custom timing controls
+python -m src.benchmark --iterations 30 --warmup 3 --threshold 0.55
+```
+
+---
+
+## Testing
+
+```bash
+pytest -q
+```
+
+## Advanced CLI Usage
+
+```bash
+# Single inference in JSON mode
+python -m src.inference --json --tier base --version v4 --threshold 0.60 --text "User CNIC is 42101-1234567-1"
+
+# Batch inference in JSON mode
+python -m src.inference --json --texts "dummy CNIC 42101-1234567-1" "Order ID 12345" --batch-size 8
+
+# Disable placeholder override
+python -m src.inference --no-placeholder-filter --text "dummy CNIC 42101-1234567-1"
+```
+
+## REST API Service (FastAPI)
+
+```bash
+# Start API server
+uvicorn src.api:app --host 0.0.0.0 --port 8000
+```
+
+```bash
+# Health check
+curl http://127.0.0.1:8000/health
+
+# Single prediction
+curl -X POST http://127.0.0.1:8000/predict \
+  -H "Content-Type: application/json" \
+  -d '{"text":"User CNIC is 42101-1234567-1","tier":"base","version":"v4","threshold":0.6,"placeholder_filter":true}'
+
+# Batch prediction
+curl -X POST http://127.0.0.1:8000/predict-batch \
+  -H "Content-Type: application/json" \
+  -d '{"texts":["dummy CNIC 42101-1234567-1","Order ID 12345"],"tier":"base","version":"v4","threshold":0.5,"placeholder_filter":true,"batch_size":8}'
+```
